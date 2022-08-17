@@ -20,6 +20,7 @@ package bisq.desktop.main.portfolio.pendingtrades;
 import bisq.desktop.Navigation;
 import bisq.desktop.common.view.ActivatableViewAndModel;
 import bisq.desktop.common.view.FxmlView;
+import bisq.desktop.components.AutoTooltipButton;
 import bisq.desktop.components.AutoTooltipLabel;
 import bisq.desktop.components.HyperlinkWithIcon;
 import bisq.desktop.components.PeerInfoIconTrading;
@@ -83,6 +84,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -130,6 +132,10 @@ public class PendingTradesView extends ActivatableViewAndModel<VBox, PendingTrad
     @FXML
     TableColumn<PendingTradesListItem, PendingTradesListItem> priceColumn, volumeColumn, amountColumn, avatarColumn,
             marketColumn, roleColumn, paymentMethodColumn, tradeIdColumn, dateColumn, chatColumn, moveTradeToFailedColumn;
+    @FXML
+    Region footerSpacer;
+    @FXML
+    AutoTooltipButton exportButton;
     private FilteredList<PendingTradesListItem> filteredList;
     private SortedList<PendingTradesListItem> sortedList;
     private TradeSubView selectedSubView;
@@ -277,6 +283,10 @@ public class PendingTradesView extends ActivatableViewAndModel<VBox, PendingTrad
                 log.info("Taker fee validation returned {}", newValue.longValue());
             }
         };
+
+        HBox.setHgrow(footerSpacer, Priority.ALWAYS);
+        HBox.setMargin(exportButton, new Insets(0, 10, 0, 0));
+        exportButton.updateText(Res.get("shared.exportCSV"));
     }
 
     @Override
