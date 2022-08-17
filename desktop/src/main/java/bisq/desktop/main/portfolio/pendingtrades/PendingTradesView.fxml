@@ -27,20 +27,20 @@
 <?import javafx.geometry.Insets?>
 <?import bisq.desktop.components.list.FilterBox?>
 <VBox fx:id="root" fx:controller="bisq.desktop.main.portfolio.pendingtrades.PendingTradesView"
-      spacing="20" xmlns:fx="http://javafx.com/fxml">
+      spacing="10" xmlns:fx="http://javafx.com/fxml">
     <padding>
         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
     </padding>
     <FilterBox fx:id="filterBox" />
-    <TableView fx:id="tableView" VBox.vgrow="SOMETIMES">
+    <TableView fx:id="tableView" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="tradeIdColumn" minWidth="100"/>
-            <TableColumn fx:id="dateColumn" minWidth="180"/>
-            <TableColumn fx:id="marketColumn" minWidth="90"/>
-            <TableColumn fx:id="priceColumn" minWidth="90"/>
+            <TableColumn fx:id="tradeIdColumn" minWidth="110" maxWidth="120"/>
+            <TableColumn fx:id="dateColumn" minWidth="170"/>
+            <TableColumn fx:id="marketColumn" minWidth="75"/>
+            <TableColumn fx:id="priceColumn" minWidth="100"/>
             <TableColumn fx:id="amountColumn" minWidth="130"/>
-            <TableColumn fx:id="volumeColumn" minWidth="130"/>
-            <TableColumn fx:id="paymentMethodColumn" minWidth="130"/>
+            <TableColumn fx:id="volumeColumn" minWidth="110"/>
+            <TableColumn fx:id="paymentMethodColumn" minWidth="120" maxWidth="170"/>
             <TableColumn fx:id="roleColumn" minWidth="130"/>
             <TableColumn fx:id="avatarColumn" minWidth="40" maxWidth="40"/>
             <TableColumn fx:id="chatColumn" minWidth="40" maxWidth="40"/>
