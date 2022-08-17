@@ -17,12 +17,15 @@
 
 package bisq.desktop.main.portfolio.pendingtrades;
 
+import bisq.desktop.util.DisplayUtils;
 import bisq.desktop.util.filtering.FilterableListItem;
 
 import bisq.core.monetary.Price;
 import bisq.core.trade.model.bisq_v1.Trade;
 import bisq.core.util.FormattingUtils;
 import bisq.core.util.coin.CoinFormatter;
+
+import org.bitcoinj.core.Coin;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -48,12 +51,24 @@ public class PendingTradesListItem implements FilterableListItem {
         return trade;
     }
 
+    public String getTradeId() {
+        return trade.getShortId();
+    }
+
+    public String getDateAsString() {
+        return DisplayUtils.formatDateTime(trade.getDate());
+    }
+
     public Price getPrice() {
         return trade.getPrice();
     }
 
     public String getPriceAsString() {
         return FormattingUtils.formatPrice(trade.getPrice());
+    }
+
+    public Coin getAmount() {
+        return trade.getAmount();
     }
 
     public String getAmountAsString() {
@@ -67,6 +82,7 @@ public class PendingTradesListItem implements FilterableListItem {
     public String getMarketDescription() {
         return getCurrencyPair(trade.getOffer().getCurrencyCode());
     }
+
 
     @Override
     public boolean match(String filterString) {

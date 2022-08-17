@@ -33,6 +33,7 @@ import bisq.desktop.main.shared.ChatView;
 import bisq.desktop.util.CssTheme;
 import bisq.desktop.util.DisplayUtils;
 import bisq.desktop.util.FormBuilder;
+import bisq.desktop.util.GUIUtil;
 
 import bisq.core.alert.PrivateNotificationManager;
 import bisq.core.locale.Res;
@@ -53,6 +54,8 @@ import bisq.common.config.Config;
 import bisq.common.crypto.KeyRing;
 import bisq.common.crypto.PubKeyRing;
 import bisq.common.util.Utilities;
+
+import com.googlecode.jcsv.writer.CSVEntryConverter;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -158,6 +161,28 @@ public class PendingTradesView extends ActivatableViewAndModel<VBox, PendingTrad
     private ChangeListener<Trade.DisputeState> disputeStateListener;
     private ChangeListener<MediationResultState> mediationResultStateListener;
     private ChangeListener<Number> getMempoolStatusListener;
+
+    private enum ColumnNames {
+        TRADE_ID(Res.get("shared.tradeId")),
+        DATE(Res.get("shared.dateTime")),
+        MARKET(Res.get("shared.market")),
+        PRICE(Res.get("shared.price")),
+        AMOUNT_BTC(Res.get("shared.amountBtc")),
+        AMOUNT(Res.get("shared.amount")),
+        VOLUME(Res.get("shared.amountMinMax")),
+        PAYMENT_METHOD(Res.get("shared.paymentMethod"));
+
+        private final String text;
+
+        ColumnNames(String text) {
+            this.text = text;
+        }
+
+        @Override
+        public String toString() {
+            return text;
+        }
+    }
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////
@@ -349,6 +374,39 @@ public class PendingTradesView extends ActivatableViewAndModel<VBox, PendingTrad
         list.addListener(tradesListChangeListener);
         updateNewChatMessagesByTradeMap();
         model.getMempoolStatus().addListener(getMempoolStatusListener);
+
+        exportButton.setOnAction(event -> {
+            CSVEntryConverter<PendingTradesListItem> headerConverter = item -> {
+                String[] columns = new String[ColumnNames.values().length];
+                for (ColumnNames m : ColumnNames.values()) {
+                    columns[m.ordinal()] = m.toString();
+                }
+                return columns;
+            };
+            CSVEntryConverter<PendingTradesListItem> contentConverter = item -> {
+                String[] columns = new String[ColumnNames.values().length];
+                columns[ColumnNames.TRADE_ID.ordinal()] = item.getTradeId();
+                columns[ColumnNames.DATE.ordinal()] = item.getDateAsString();
+                columns[ColumnNames.MARKET.ordinal()] = item.getMarketDescription();
+                columns[ColumnNames.PRICE.ordinal()] = item.getPriceAsString();
+//                columns[ColumnNames.DEVIATION.ordinal()] = item.getPriceDeviationAsString();
+//                columns[ColumnNames.TRIGGER_PRICE.ordinal()] = item.getTriggerPriceAsString();
+                columns[ColumnNames.AMOUNT_BTC.ordinal()] = item.getAmountAsString();
+//                columns[ColumnNames.AMOUNT.ordinal()] = item.getAmount();
+//                columns[ColumnNames.VOLUME.ordinal()] = item.getVolumeAsString();
+                columns[ColumnNames.PAYMENT_METHOD.ordinal()] = item.getPaymentMethod();
+//                columns[ColumnNames.DIRECTION.ordinal()] = item.getDirectionLabel();
+//                columns[ColumnNames.STATUS.ordinal()] = String.valueOf(!item.getOpenOffer().isDeactivated());
+                return columns;
+            };
+
+            GUIUtil.exportCSV("openTrades.csv",
+                    headerConverter,
+                    contentConverter,
+                    new PendingTradesListItem(null, null),
+                    sortedList,
+                    (Stage) root.getScene().getWindow());
+        });
     }
 
     @Override
@@ -357,6 +415,7 @@ public class PendingTradesView extends ActivatableViewAndModel<VBox, PendingTrad
         sortedList.comparatorProperty().unbind();
         selectedItemSubscription.unsubscribe();
         selectedTableItemSubscription.unsubscribe();
+        exportButton.setOnAction(null);
 
         removeSelectedSubView();
 
